@@ -1,8 +1,35 @@
 require 'httparty'
-
+require 'awesome_print'
 #Starter Code:
+
+class Locations
+
+  def initialize(place_names)
+    @place_names = place_names
+  end
+
+  def all_places_latlng
+    result = {}
+    @place_names.each do |place_name|
+      place_uri = URI.encode("https://maps.googleapis.com/maps/api/geocode/json?address=#{ place_name }")
+      place_response = HTTParty.get(place_uri).parsed_response
+      lat = place_response["results"][0]["geometry"]["location"]["lat"]
+      lng = place_response["results"][0]["geometry"]["location"]["lng"]
+      latlong = {}
+      latlong["lat"] = lat
+      latlong["lng"] = lng
+      result[place_name] = latlong
+    end
+    return result
+  end
+
+end
+
 seven_wonders = ["Great Pyramind of Giza", "Hanging Gardens of Babylon", "Colossus of Rhodes", "Pharos of Alexandria", "Statue of Zeus at Olympia", "Temple of Artemis", "Mausoleum at Halicarnassus"]
 
+locations = Locations.new(seven_wonders)
+
+ap locations.all_places_latlng
 
 
 
